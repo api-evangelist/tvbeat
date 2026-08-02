@@ -1,7 +1,26 @@
 aid: tvbeat
+accessModel:
+  pricing: unknown
+  onboarding: unknown
+  trial: false
+  try_now: false
+  public: false
+  label: Unknown
+  confidence: low
+  source: []
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/tvbeat.png
 name: TVbeat
-description: TVbeat is a company surfaced as a portfolio company of techstars and added to the API Evangelist
-  network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+description: TVbeat is a London-based, Techstars-backed advertising technology company
+  whose platform unifies linear television and streaming (CTV) advertising operations
+  into a single system. It lets media owners and buyers forecast, plan, transact,
+  optimize, and measure campaigns across audiences, yield, and operations, supporting
+  multi-currency transacting (ratings, spots, impressions, and outcomes) and modern
+  buying models — Direct, Programmatic, Self-Serve, and AI-driven — across both traditional
+  linear spots and streaming inventory. TVbeat does not publish a public API, SDK,
+  or open developer portal; its documentation portal at docs.tvbeat.com is private
+  and requires credentials.
 url: https://raw.githubusercontent.com/api-evangelist/tvbeat/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -11,9 +30,17 @@ x-tier: stub
 x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-21'
 tags:
 - Company
+- Advertising
+- AdTech
+- Television
+- Streaming
+- CTV
+- Audience Measurement
+- Analytics
+- Media
 apis: []
 maintainers:
 - FN: Kin Lane
@@ -23,3 +50,18 @@ maintainers:
 common:
 - type: Website
   url: https://tvbeat.com/
+- type: Documentation
+  url: https://docs.tvbeat.com/
+- type: GitHubOrganization
+  url: https://github.com/tvbeat
+- type: TermsOfService
+  url: https://tvbeat-legal.snazzydocs.com/1.0/terms-of-use
+- type: PrivacyPolicy
+  url: https://tvbeat-legal.snazzydocs.com/1.0/privacy-policy
+- type: DomainSecurity
+  url: security/tvbeat-domain-security.yml
+x-enrichment:
+  date: '2026-07-21'
+  status: minimal
+  artifacts_added: 1
+  pass: local-v1

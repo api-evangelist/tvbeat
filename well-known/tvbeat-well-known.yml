@@ -1,0 +1,88 @@
+generated: '2026-08-12'
+method: probed
+source: >-
+  Live HTTP probes of the /.well-known/ discovery surface on every TVbeat host named in
+  apis.yml and in the provider's own public API reference, run 2026-08-12.
+description: >-
+  TVbeat serves NO /.well-known/ documents. Every path was probed on every host and
+  every result is a miss. This file records the absence; no WellKnown, SecurityTxt,
+  APICatalog or AgentCard pointer is emitted in apis.yml, because a pointer asserts the
+  provider serves that surface and TVbeat does not.
+result: none
+hosts:
+  - host: https://tvbeat.com
+    note: >-
+      The origin returns 403 Forbidden with a 146-byte nginx error body for the entire
+      /.well-known/ directory and 404 for /security.txt. The directory is blocked at the
+      web server, not populated.
+    documents:
+      - {path: /.well-known/security.txt, status: 403, content_type: text/html, document: false}
+      - {path: /security.txt, status: 404, content_type: text/html, document: false}
+      - {path: /.well-known/openid-configuration, status: 403, content_type: text/html, document: false}
+      - {path: /.well-known/oauth-authorization-server, status: 403, content_type: text/html, document: false}
+      - {path: /.well-known/oauth-protected-resource, status: 403, content_type: text/html, document: false}
+      - {path: /.well-known/api-catalog, status: 403, content_type: text/html, document: false}
+      - {path: /.well-known/ai-plugin.json, status: 403, content_type: text/html, document: false}
+      - {path: /.well-known/agent-card.json, status: 403, content_type: text/html, document: false}
+      - {path: /.well-known/agent.json, status: 403, content_type: text/html, document: false}
+  - host: https://www.tvbeat.com
+    note: Identical origin and identical 403/404 behaviour to the apex.
+    documents:
+      - {path: /.well-known/security.txt, status: 403, content_type: text/html, document: false}
+      - {path: /security.txt, status: 404, content_type: text/html, document: false}
+      - {path: /.well-known/openid-configuration, status: 403, content_type: text/html, document: false}
+      - {path: /.well-known/oauth-authorization-server, status: 403, content_type: text/html, document: false}
+      - {path: /.well-known/oauth-protected-resource, status: 403, content_type: text/html, document: false}
+      - {path: /.well-known/api-catalog, status: 403, content_type: text/html, document: false}
+      - {path: /.well-known/ai-plugin.json, status: 403, content_type: text/html, document: false}
+      - {path: /.well-known/agent-card.json, status: 403, content_type: text/html, document: false}
+      - {path: /.well-known/agent.json, status: 403, content_type: text/html, document: false}
+  - host: https://docs.tvbeat.com
+    note: >-
+      FALSE-POSITIVE 200s. This is a SnazzyDocs single-page app whose catch-all answers
+      every path — including every /.well-known/* path, /llms.txt, /openapi.json and
+      /swagger.json — with the same ~7KB text/html page titled "Login". No path returns
+      a document; the byte counts differ only by the length of the path echoed into the
+      HTML. Recorded as present-but-not-a-real-document, exactly as the pipeline requires.
+    documents:
+      - {path: /.well-known/security.txt, status: 200, content_type: 'text/html; charset=UTF-8', bytes: 7045, document: false, reason: SPA login shell}
+      - {path: /security.txt, status: 200, content_type: 'text/html; charset=UTF-8', bytes: 7033, document: false, reason: SPA login shell}
+      - {path: /.well-known/openid-configuration, status: 200, content_type: 'text/html; charset=UTF-8', bytes: 7053, document: false, reason: SPA login shell}
+      - {path: /.well-known/oauth-authorization-server, status: 200, content_type: 'text/html; charset=UTF-8', bytes: 7059, document: false, reason: SPA login shell}
+      - {path: /.well-known/oauth-protected-resource, status: 200, content_type: 'text/html; charset=UTF-8', bytes: 7057, document: false, reason: SPA login shell}
+      - {path: /.well-known/api-catalog, status: 200, content_type: 'text/html; charset=UTF-8', bytes: 7044, document: false, reason: SPA login shell}
+      - {path: /.well-known/ai-plugin.json, status: 200, content_type: 'text/html; charset=UTF-8', bytes: 7047, document: false, reason: SPA login shell}
+      - {path: /.well-known/agent-card.json, status: 200, content_type: 'text/html; charset=UTF-8', bytes: 7048, document: false, reason: SPA login shell}
+      - {path: /.well-known/agent.json, status: 200, content_type: 'text/html; charset=UTF-8', bytes: 7043, document: false, reason: SPA login shell}
+  - host: https://api.tvbeat.com
+    note: >-
+      The API root named by TVbeat's own reference. NXDOMAIN on the system resolver,
+      1.1.1.1 and 8.8.8.8 — no path could be probed because the name does not resolve.
+    dns: NXDOMAIN
+    documents: []
+contract_discovery:
+  note: >-
+    Full STEP 0b sweep, all misses except the GitHub-hosted prose reference.
+  probes:
+    - {target: 'https://tvbeat.com/openapi.json', status: 404}
+    - {target: 'https://tvbeat.com/openapi.yaml', status: 404}
+    - {target: 'https://tvbeat.com/swagger.json', status: 404}
+    - {target: 'https://tvbeat.com/api-docs', status: 404}
+    - {target: 'https://tvbeat.com/v1/openapi.json', status: 404}
+    - {target: 'https://tvbeat.com/llms.txt', status: 404}
+    - {target: 'https://tvbeat.com/robots.txt', status: 404}
+    - {target: 'https://tvbeat.com/sitemap.xml', status: 404}
+    - {target: 'https://docs.tvbeat.com/openapi.json', status: 200, document: false, reason: SPA login shell}
+    - {target: 'https://docs.tvbeat.com/swagger.json', status: 200, document: false, reason: SPA login shell}
+    - {target: 'https://docs.tvbeat.com/api-docs', status: 200, document: false, reason: SPA login shell}
+    - {target: 'https://docs.tvbeat.com/llms.txt', status: 200, document: false, reason: SPA login shell}
+    - {target: 'https://api.tvbeat.com/openapi.json', status: null, reason: NXDOMAIN}
+  graphql: 'No /graphql surface exists on any resolving TVbeat host; graphql.tvbeat.com is NXDOMAIN.'
+  mcp: 'No hosted MCP server found on any TVbeat host or in any public MCP registry.'
+  a2a: 'No agent card. Every /.well-known/agent-card.json and /.well-known/agent.json probe above is a 403 or an HTML SPA shell — no JSON object with AgentCard shape was returned by any host.'
+  found: >-
+    The only machine-readable contract material TVbeat publishes is the pair of draft-04
+    JSON Schemas embedded in its own API reference at
+    https://github.com/tvbeat/public/blob/master/docs/api.md — saved verbatim to
+    json-schema/. There is no OpenAPI, Swagger, GraphQL SDL, AsyncAPI or protobuf
+    anywhere on TVbeat's public surface.

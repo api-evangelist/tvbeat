@@ -1,0 +1,36 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+provider: TVbeat
+providerId: tvbeat
+generated: '2026-08-12'
+method: searched
+created: '2026-08-12'
+modified: '2026-08-12'
+source: >-
+  https://tvbeat.com/, https://tvbeat.com/how, https://tvbeat.com/about — every page of
+  TVbeat's public website was read on 2026-08-12. There is no /pricing page, no plans
+  page, no tier table and no rate card anywhere on the site or in the public GitHub
+  documentation.
+description: >-
+  TVbeat publishes NO pricing. It sells an enterprise SaaS "commercial engine" to
+  broadcasters, pay-TV operators and CTV platforms through a sales motion — the only
+  commercial call-to-action on the site is a "Request a demo" mailto to
+  info@tvbeat.com. There is no self-serve signup, no free tier, no trial, and no
+  published unit price, quota or overage for either the platform or the analytics API.
+plan_count: 0
+plans: []
+commercial_model:
+  type: enterprise-contract
+  self_serve: false
+  trial: false
+  free_tier: false
+  call_to_action: 'mailto:info@tvbeat.com — "Request a demo"'
+  contract_terms: https://tvbeat-legal.snazzydocs.com/1.0/terms-of-use
+  note: >-
+    API access is provisioned as part of a customer account: TVbeat's own API reference
+    states that datasets and credentials are "assigned when opening an account". Pricing
+    is therefore contractual, not published.
+probe_evidence:
+  - {url: 'https://tvbeat.com/pricing', status: 404}
+  - {url: 'https://tvbeat.com/plans', status: 404}
+  - {url: 'https://tvbeat.com/', status: 200, finding: 'no pricing link in nav or footer; nav is What we do / How we do it / About Us / Privacy / Terms of Use'}

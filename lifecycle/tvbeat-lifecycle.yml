@@ -1,0 +1,92 @@
+generated: '2026-08-12'
+method: probed
+source: >-
+  https://github.com/tvbeat/public/blob/master/docs/api.md,
+  https://github.com/tvbeat/public/blob/master/docs/release-notes.md,
+  https://tvbeat.com/how, plus live probes of https://status.tvbeat.com,
+  https://docs.tvbeat.com and https://api.tvbeat.com on 2026-08-12.
+description: >-
+  Versioning, deprecation, SLA and status posture for TVbeat. Almost every field here
+  is an absence, and the absences were each probed rather than assumed.
+versioning:
+  scheme: none
+  mechanism: null
+  docs: null
+  notes: >-
+    The public API reference carries no version identifier — no path segment, no
+    header, no media-type parameter, no dated release train. The only versioning
+    TVbeat publishes is the Dashboard release numbering (Cycle 102 → 111.0.1), which
+    tracks the UI product rather than the API contract.
+  detail: changelog/tvbeat-changelog.yml
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  notes: >-
+    No deprecation policy, no notice period, no RFC 8594 Sunset/Deprecation header
+    support is documented anywhere on TVbeat's public surface. No Deprecation pointer
+    is emitted.
+sla:
+  url: null
+  public_uptime_target: null
+  notes: >-
+    tvbeat.com/how advertises "24/7 real-time monitoring and alerting based on industry
+    leading Service Level Agreements", but no SLA document, uptime target or credit
+    schedule is published — the commitment is described in marketing copy and handled
+    in customer contracts.
+status_page:
+  url: null
+  published: false
+  probe:
+    host: status.tvbeat.com
+    dns: 104.192.142.22
+    finding: >-
+      A dangling Atlassian Statuspage CNAME. http://status.tvbeat.com/ returns 302 with
+      an X-Statuspage-Version header, but the TLS certificate presented is
+      CN=*.statuspage.io and following the redirect lands on
+      https://www.atlassian.com/software/statuspage — the Statuspage marketing site.
+      There is no TVbeat status page behind it; the subdomain points at an unclaimed or
+      decommissioned Statuspage account.
+    checked: '2026-08-12'
+  notes: >-
+    No StatusPage pointer is emitted. A 200 that resolves to a vendor's own marketing
+    page is not a status page.
+api_surface:
+  documented_base_url: https://api.tvbeat.com
+  reachable: false
+  probe:
+    dns: NXDOMAIN
+    resolvers_checked: [system, 1.1.1.1, 8.8.8.8]
+    checked: '2026-08-12'
+  reference_last_modified: '2017-05-23'
+  reference_url: https://github.com/tvbeat/public/blob/master/docs/api.md
+  notes: >-
+    TVbeat's public API reference is real, first-party and still served from the
+    company's own GitHub organization, but the host it documents no longer exists in
+    public DNS and the document has not been touched since 2017. The current product
+    documentation portal at https://docs.tvbeat.com is a SnazzyDocs instance that
+    returns a login page for every path, so any successor API contract is
+    credential-gated.
+docs_portal:
+  url: https://docs.tvbeat.com/
+  public: false
+  probe:
+    status: 200
+    finding: >-
+      Every path — including /1.0/api, /llms.txt, /openapi.json and every
+      /.well-known/* path — returns the same ~7KB SnazzyDocs HTML page titled "Login".
+      A 200 here is an SPA catch-all, not a document.
+    checked: '2026-08-12'
+legal:
+  terms_of_service: https://tvbeat-legal.snazzydocs.com/1.0/terms-of-use
+  privacy_policy: https://tvbeat-legal.snazzydocs.com/1.0/privacy-policy
+  probe:
+    status: 200
+    note: >-
+      Both legal pages return 200 with the title "TVbeat Legal Documentation", but the
+      body is a JS-rendered SnazzyDocs shell (~37 characters of text extractable
+      server-side), so the clauses could not be read without a browser.
+    checked: '2026-08-12'
+rate_limits: rate-limits/tvbeat-rate-limits.yml

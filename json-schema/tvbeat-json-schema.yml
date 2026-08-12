@@ -1,0 +1,37 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://github.com/tvbeat/public/blob/master/docs/api.md — TVbeat publishes two
+  JSON Schema (draft-04) request documents inline in its own public API reference,
+  hosted in the company's own GitHub organization (github.com/tvbeat). Both schemas
+  below are saved VERBATIM as published; nothing was added, renamed, or normalized.
+description: >-
+  Request-body JSON Schemas for the two POST operations of the TVbeat analytics API.
+  These are the only machine-readable contract fragments TVbeat publishes — there is
+  no OpenAPI, Swagger, GraphQL SDL, or AsyncAPI document on any TVbeat host as of the
+  probe date (see well-known/tvbeat-well-known.yml for the probe record).
+caveat: >-
+  The API root these schemas describe (https://api.tvbeat.com) does NOT resolve in
+  public DNS as of 2026-08-12 (NXDOMAIN on 1.1.1.1, 8.8.8.8 and the local resolver),
+  and the reference document was last modified 2017-05-23. Treat this as a published,
+  historically accurate contract fragment, not as a live callable surface.
+schemas:
+  - name: DataTypes.Query (dimensions_search)
+    file: tvbeat-dimensions-search-query.json
+    draft: 'http://json-schema.org/draft-04/schema#'
+    describes: 'POST /{dataset}/dimensions_search request body'
+    required: [dimension_name]
+    properties: [dimension_name, search_string, start, stop, limit]
+  - name: DataTypes.Query (breakdown)
+    file: tvbeat-breakdown-query.json
+    draft: 'http://json-schema.org/draft-04/schema#'
+    describes: 'POST /{dataset}/breakdown request body'
+    required: [dimension_name, filters, time_span]
+    properties: [dimension_name, filters, time_span, interval, query_options]
+    definitions:
+      - DataTypes.TimeSpan
+      - DataTypes.QueryOptions
+      - DataTypes.SortMetric
+      - DataTypes.SortOrder
+      - DataTypes.Interval
+      - DataTypes.Filter

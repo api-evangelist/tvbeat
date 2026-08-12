@@ -1,0 +1,22 @@
+{
+  "breakdown": [
+    {"key": "subscriber.regions", "description": "Region", "type": "Set"},
+    {"key": "content.episode", "description": "Episode", "type": "Set"},
+    {"key": "content.genre", "description": "Genre", "type": "Set"},
+    {"key": "device.ua", "description": "Device Type", "type": "Set"},
+    {"key": "content.id", "description": "Content", "type": "HugeSet"}
+  ],
+  "target_audience": [],
+  "filter": [
+    {"key": "subscriber.regions", "description": "Region", "type": "Set"},
+    {"key": "content.episode", "description": "Episode", "type": "Set"},
+    {"key": "content.genre", "description": "Genre", "type": "Set"},
+    {"key": "device.ua", "description": "Device Type", "type": "Set"},
+    {"key": "content.id", "description": "Content", "type": "HugeSet"},
+    {"key": "device.oss", "description": "Operating systems", "type": "Set"},
+    {"key": "content.subgenre", "description": "Subgenre", "type": "Set"},
+    {"key": "video.resolution", "description": "Video resolution", "type": "Set"},
+    {"key": "content.season", "description": "Season", "type": "Set"},
+    {"key": "channel.id", "description": "Channel", "type": "Set"}
+  ]
+}

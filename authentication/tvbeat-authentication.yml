@@ -1,0 +1,83 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://github.com/tvbeat/public/blob/master/docs/api.md#authenticating-your-request
+  — TVbeat's own public API reference, published in the company's GitHub organization
+  (github.com/tvbeat, "TVbeat public pages"). No OpenAPI securityScheme exists to
+  derive from; this profile is transcribed from the published prose specification.
+docs: https://github.com/tvbeat/public/blob/master/docs/api.md
+description: >-
+  The TVbeat analytics API authenticates every request with a custom HMAC-SHA256
+  request-signing scheme modelled closely on AWS Signature Version 4. There is no
+  OAuth 2.0, no OpenID Connect, and no bearer-token or simple API-key header — a
+  signature must be computed per request, so no static credential alone grants access.
+caveat: >-
+  The API root this scheme protects (https://api.tvbeat.com) does not resolve in public
+  DNS as of 2026-08-12 and the reference was last modified 2017-05-23. The current
+  TVbeat product documentation at https://docs.tvbeat.com is credential-gated
+  (SnazzyDocs login), so a newer authentication model, if one exists, is not public.
+summary:
+  types:
+    - custom-hmac-signature
+  oauth2: false
+  openid_connect: false
+  mutual_tls: false
+  static_api_key: false
+schemes:
+  - name: TVBEAT-HMAC-SHA256
+    type: signature
+    algorithm: HMAC-SHA256
+    modelled_on: AWS Signature Version 4
+    credentials:
+      - name: access key ID
+        role: public identifier, sent as the Credential component of the Authorization header
+      - name: secret
+        role: private key material, never transmitted; used to derive the signing key
+    provisioning: >-
+      Both the access key ID and the secret are assigned by TVbeat when an account is
+      opened. There is no self-serve key issuance and no published key-rotation policy.
+    headers:
+      - name: x-tvbeat-date
+        required: true
+        value: integer UNIX timestamp of the moment the request was made
+      - name: Authorization
+        required: true
+        value: >-
+          Algorithm=TVBEAT-HMAC-SHA256, Credential=<access_key>, Service=ae,
+          SignedHeaders=<signed_headers>, Signature=<hex signature>
+    canonical_request: >-
+      HTTP_verb + "\n" + canonical_uri + "\n" + canonical_headers + "\n" +
+      signed_headers + "\n" + payload_hash
+    canonical_request_notes:
+      - canonical_uri excludes protocol, hostname and query string.
+      - canonical_headers must include host and x-tvbeat-date, lowercased, trimmed, ASCII-sorted, with a trailing newline.
+      - signed_headers is a semicolon-separated list of the header names included (e.g. "host;x-tvbeat-date").
+      - payload_hash is the SHA256 hex digest of the request body (SHA256 of the empty string when there is no body).
+    string_to_sign: algorithm + "\n" + service + "\n" + SHA256(canonical_request)
+    key_derivation:
+      - key_date = HMAC("TVBEAT" + secret, timestamp)
+      - key = HMAC(key_date, service)
+    signature: hex(HMAC(derived_key, string_to_sign))
+    constants:
+      algorithm: TVBEAT-HMAC-SHA256
+      service: ae
+    replay_protection: >-
+      The signed x-tvbeat-date timestamp is folded into the key derivation, so a
+      signature is only valid for the timestamp it was generated with. The document
+      does not state a permitted clock-skew window.
+    sample_code:
+      language: python
+      published: true
+      note: The reference publishes a complete Python 2 signing example using hmac/hashlib and requests.
+authorization:
+  model: >-
+    Access is scoped per account to one or more named "datasets" and to the set of
+    dimensions permitted within them; the dataset name is a path segment
+    (/{dataset}/...). Requesting a dataset or dimension outside the granted
+    permissions returns HTTP 403.
+  scopes_published: false
+  scope_reference: null
+errors:
+  unauthenticated: 401 — request was not signed correctly
+  unauthorized: 403 — dataset or dimension outside the caller's access permissions
+  detail: errors/tvbeat-problem-types.yml

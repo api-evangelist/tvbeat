@@ -1,0 +1,115 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://github.com/tvbeat/public/blob/master/docs/api.md — cross-cutting
+  request/response semantics read out of TVbeat's own public API reference. Where the
+  reference is silent, the field records "not documented" rather than an inference.
+docs: https://github.com/tvbeat/public/blob/master/docs/api.md
+description: >-
+  How the TVbeat analytics API behaves across every operation: signing style, request
+  shape, pagination, error envelope, versioning, tracing and rate-limit signalling.
+  The surface is deliberately small — three query-shaped endpoints over one analytics
+  core — so most CRUD-era conventions simply do not apply.
+
+base_url: https://api.tvbeat.com
+base_url_status: >-
+  NXDOMAIN in public DNS as of 2026-08-12 (checked against the local resolver,
+  1.1.1.1 and 8.8.8.8). Recorded as published, not as reachable.
+api_style: >-
+  RPC-flavoured REST over HTTPS. One GET and two POSTs, each parametrized in the path
+  by a {dataset} segment; POST bodies are JSON documents validated against published
+  draft-04 JSON Schemas; responses are JSON.
+
+authentication:
+  scheme: TVBEAT-HMAC-SHA256 per-request signature (AWS SigV4-style)
+  credentials: access key ID + secret, assigned at account opening
+  required_headers: [x-tvbeat-date, Authorization]
+  service_constant: ae
+  docs: https://github.com/tvbeat/public/blob/master/docs/api.md
+  detail: authentication/tvbeat-authentication.yml
+
+idempotency:
+  supported: false
+  mechanism: null
+  note: >-
+    No idempotency key, no replay semantics, no retention window is documented. The
+    two POST operations are read-only queries — they compute a breakdown or search a
+    dimension and create no server-side state — so they are naturally safe to repeat,
+    but TVbeat neither says so nor offers an idempotency contract. Recorded as
+    unsupported; no Idempotency pointer is emitted for this provider.
+
+pagination:
+  style: none
+  request_params:
+    limit: >-
+      dimensions_search — optional integer cap on results returned.
+      breakdown — optional query_options.limit, default 500.
+  cursor: null
+  offset: null
+  response_fields: []
+  note: >-
+    There is no cursor, offset, page token, or has_more indicator. A caller can cap
+    result size but cannot walk past the cap; large dimensions are instead narrowed
+    with search_string (minimum 2 characters, mandatory for HugeSet dimensions).
+
+sorting:
+  supported: true
+  scope: 'POST /{dataset}/breakdown only'
+  params:
+    sort_metric: [UniqueReach, AverageDuration, ShareOnContent, ReachPercent]
+    sort_order: [ASC, DESC]
+
+filtering:
+  supported: true
+  shape: >-
+    filters[] of {filter_dimension_name, filter_ids[]} — filter values are the numeric
+    ids returned by a dimensions_search query, never free text.
+  time_span: >-
+    {from, to} integer UNIX timestamps, semi-open interval [from, to) — "from" is
+    included, "to" is excluded. Required on breakdown queries.
+  interval:
+    supported_values: [Total]
+    note: The reference states only "Total" is currently supported and is assumed when omitted.
+
+field_expansion:
+  supported: false
+sparse_fieldsets:
+  supported: false
+metadata:
+  supported: false
+
+request_tracing:
+  request_id_header: null
+  note: No request-id or correlation header is documented on requests or responses.
+
+versioning:
+  scheme: none
+  mechanism: null
+  note: >-
+    No version segment in the path, no version header, no media-type versioning. The
+    only version-shaped signal TVbeat publishes is the dashboard release-notes
+    numbering (see changelog/tvbeat-changelog.yml), which versions the product UI, not
+    the API contract.
+  detail: lifecycle/tvbeat-lifecycle.yml
+
+error_envelope:
+  media_type: application/json
+  rfc9457: false
+  shape: unpublished
+  statuses: [401, 403, 429]
+  detail: errors/tvbeat-problem-types.yml
+
+rate_limit_signaling:
+  headers: none documented
+  exhaustion_status: 429
+  model: 1 concurrent query per key/secret pair
+  detail: rate-limits/tvbeat-rate-limits.yml
+
+content_negotiation:
+  request: application/json bodies on POST
+  response: application/json
+  compression: not documented
+
+webhooks:
+  supported: false
+  note: No event, callback, streaming or webhook surface appears anywhere in the public reference.

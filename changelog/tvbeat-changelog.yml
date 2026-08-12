@@ -1,0 +1,121 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://github.com/tvbeat/public/blob/master/docs/release-notes.md — "TVbeat Dashboard
+  Release notes", a dated release log published in TVbeat's own GitHub organization.
+docs: https://github.com/tvbeat/public/blob/master/docs/release-notes.md
+description: >-
+  TVbeat publishes a dated release log for the TVbeat Dashboard — numbered releases with
+  point-release hotfixes, each carrying Features and Bugs/Improvements sections. It
+  versions the PRODUCT, not the API contract: no entry references an API version,
+  endpoint, breaking change or deprecation, and the API reference itself carries no
+  version at all.
+scheme:
+  style: sequential release number with point hotfixes
+  examples: ['Cycle 102', '107 release', '110.0.3 Hotfix']
+  api_versioned: false
+  detail: lifecycle/tvbeat-lifecycle.yml
+current_version: 111.0.1
+entry_count: 26
+coverage:
+  earliest: '2018-03-05'
+  latest_stated: '2019-12-15'
+  note: >-
+    The newest entry is headed "111.0.1 Hotfix / 15 Dec, 2019" but the file's last
+    commit is 2019-01-29, and it sits above "111 Release / 14 Jan, 2019" in a
+    strictly newest-first log — so the stated year is almost certainly a typo for
+    2018. Both facts are recorded rather than corrected.
+staleness:
+  last_commit: '2019-01-29'
+  stale: true
+  note: >-
+    Not updated in over seven years as of the 2026-08-12 pass, while the company has
+    shipped an entirely new product line (linear + CTV commercial engine) and named
+    partnerships in 2026. The public log no longer tracks the shipping product.
+entries:
+  - version: 111.0.1
+    kind: hotfix
+    date_published: '15 Dec, 2019'
+    fixes:
+      - Audience segment no longer duplicated on multiple save button clicks
+      - Delete/edit buttons restored in the audience builder list
+  - version: '111'
+    kind: release
+    date: '2019-01-14'
+    additions:
+      - Fill rate calculation improvement
+      - Time series table widget
+      - Local sorting (asc/desc limited to the first 5000 items returned) for faster tables and charts
+      - Operational reports for Campaigns
+    fixes:
+      - hideZeroItems fixed for the time series table widget
+      - Duplicate metrics text in exported Excel files fixed
+      - Airtime values now generated correctly when exporting Content to Excel
+      - Max width of a table's first column improved
+      - Export option restored on the report widget when Segmentation is unchecked
+      - Campaign metadata field definitions updated
+  - version: 110.0.4
+    kind: hotfix
+    date: '2018-12-20'
+    fixes:
+      - Views unchecked in settings no longer appear in the Product menu
+  - version: 110.0.3
+    kind: hotfix
+    date: '2018-12-14'
+    fixes:
+      - Campaign loading in the filter picker fixed
+      - Metadata column now displays in segmentation
+  - version: 110.0.2
+    kind: hotfix
+    date: '2018-12-12'
+    fixes:
+      - Local cache bug removed
+      - Deleting datasets in client accounts fixed
+      - Cacher now crawls all user groups in a client account
+  - version: 110.0.1
+    kind: hotfix
+    date: '2018-12-11'
+    fixes:
+      - Incorrect filters when switching between In-flight and Completed campaigns
+      - FFDR tooltip not displaying
+      - Yesterday midnight set as the restriction in the Campaign module
+  - version: '110'
+    kind: release
+    date_range: '2018-11-01 to 2018-12-11'
+    additions:
+      - Campaign view metadata fields (Create date, FFDR, Excess Inventory, Primary Trafficker, Campaign status, Clash Codes)
+      - Sortable campaign table headers with sticky header and scroll-to-top paging
+      - Campaign status and Primary trafficker metadata filters
+      - Export to Excel from the campaign view
+      - Header tooltips describing each metric/metadata field
+  - version: '109'
+    kind: release
+    date_range: '2018-10-01 to 2018-10-31'
+    hotfixes: [109.0.1, 109.0.2, 109.0.3, 109.0.4, 109.0.5, 109.0.6]
+  - version: '108'
+    kind: release
+    date_range: '2018-09-01 to 2018-10-09'
+    hotfixes: [108.0.1, 108.0.2, 108.0.3, 108.0.4]
+  - version: '107'
+    kind: release
+    date_range: '2018-08-01 to 2018-08-31'
+  - version: 'Cycle 106'
+    kind: release
+    date_range: '2018-07-01 to 2018-07-31'
+    hotfixes: [106.0.1, 106.0.2]
+  - version: 'Cycle 105'
+    kind: release
+    date_range: '2018-06-01 to 2018-06-30'
+  - version: 'Cycle 103/104'
+    kind: release
+    date_range: '2018-04-01 to 2018-05-30'
+  - version: 'Cycle 102'
+    kind: release
+    date_range: '2018-03-05 to 2018-03-30'
+related:
+  - title: TVbeat Dashboard Updates
+    url: https://github.com/tvbeat/public/blob/master/docs/updates.md
+    note: Narrative feature announcements (Audience Builder & Indexing, 10 April 2018).
+  - title: Tutorials
+    url: https://github.com/tvbeat/public/blob/master/docs/tutorial.md
+    note: Dashboard how-to guides (Audience Builder), not API onboarding.

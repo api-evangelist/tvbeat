@@ -1,0 +1,53 @@
+generated: '2026-08-12'
+method: searched
+format: custom
+source: >-
+  https://github.com/tvbeat/public/blob/master/docs/api.md — the "Errors" sections
+  under "Authenticating Your Request" and "Rate Limiting" in TVbeat's own public API
+  reference. There is no OpenAPI to derive 4xx/5xx responses from; these are the
+  status codes the provider documents in prose.
+docs: https://github.com/tvbeat/public/blob/master/docs/api.md
+description: >-
+  Error semantics for the TVbeat analytics API. TVbeat does NOT use RFC 9457
+  application/problem+json; the reference states only that each failing status code is
+  returned "with an appropriate error message" and does not publish the error envelope
+  shape, an error-code registry, or per-code remediation.
+envelope:
+  media_type: application/json
+  rfc9457: false
+  shape: unpublished
+  note: >-
+    The published reference never shows an error body. Any envelope shape would be a
+    guess, so none is recorded here. This is a real documentation gap, not a
+    measurement gap.
+problems:
+  - status: 401
+    title: Unauthorized
+    meaning: The request was not properly signed with the TVBEAT-HMAC-SHA256 scheme.
+    remediation: >-
+      Recompute the canonical request, string-to-sign and signing key exactly as
+      documented; confirm the x-tvbeat-date header carries the same integer UNIX
+      timestamp that was used to derive the signing key.
+    evidence: 'docs/api.md — "In case you fail to properly sign your request, an HTTP 401 (Unauthorized) status code will be returned with an appropriate error message."'
+  - status: 403
+    title: Forbidden
+    meaning: >-
+      The caller requested a resource — either a dataset or a dimension — that its
+      access permissions do not allow.
+    remediation: >-
+      Query GET /{dataset}/dimensions to see the dimensions actually granted to the
+      key, and use only dataset names assigned to the account.
+    evidence: 'docs/api.md — "If you try to access a resource (either a dataset or a dimension) not allowed by your access permissions, an HTTP 403 (Forbidden) status code will be returned with an appropriate error message."'
+  - status: 429
+    title: Too Many Requests
+    meaning: The concurrency limit was exceeded — more than one in-flight query per key/secret pair.
+    remediation: >-
+      Serialize queries per credential; wait for the in-flight query to complete
+      before issuing the next one. No Retry-After header is documented.
+    evidence: 'docs/api.md — "In case you exceed the rate limit, an HTTP 429 (Too Many Requests) status code will be returned with an appropriate error message."'
+    detail: rate-limits/tvbeat-rate-limits.yml
+gaps:
+  - No error-code registry (no machine-readable code, type or title field documented).
+  - No error envelope schema, despite two request schemas being published as JSON Schema.
+  - No documented retry guidance or Retry-After header on 429.
+  - No 5xx behaviour documented at all.

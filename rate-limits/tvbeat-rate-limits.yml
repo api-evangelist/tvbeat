@@ -1,0 +1,54 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://github.com/tvbeat/public/blob/master/docs/api.md#rate-limiting — the "Rate
+  Limiting" section of TVbeat's own public API reference, published in the company's
+  GitHub organization.
+docs: https://github.com/tvbeat/public/blob/master/docs/api.md
+provider: TVbeat
+providerId: tvbeat
+description: >-
+  TVbeat publishes exactly one rate limit and it is a CONCURRENCY limit, not a
+  requests-per-window limit: every key/secret combination is limited to a single
+  concurrent API query. Exceeding it returns HTTP 429.
+limit_count: 1
+responseCodes:
+  throttled: 429
+headers:
+  published: false
+  note: >-
+    TVbeat documents no rate-limit response headers — no X-RateLimit-*, no RateLimit-*
+    (RFC 9239 style), and no Retry-After on 429. An agent gets a status code and
+    nothing else, so backoff has to be blind. Recorded as a gap, not inferred.
+limits:
+  - name: Concurrent API queries per credential
+    scope: key
+    scope_detail: per access key ID / secret pair
+    metric: concurrent_requests
+    limit: 1
+    timeFrame: concurrent
+    burst: null
+    window: null
+    applies_to:
+      - 'GET /{dataset}/dimensions'
+      - 'POST /{dataset}/dimensions_search'
+      - 'POST /{dataset}/breakdown'
+    evidence: 'docs/api.md — "At the moment, every key/secret combination is limited to a single concurrent API query."'
+    exhaustion_status: 429
+caveat: >-
+  Not observed live: the documented API root https://api.tvbeat.com does not resolve in
+  public DNS as of 2026-08-12, so the limit could not be confirmed against a running
+  service. The reference was last modified 2017-05-23; TVbeat's current product
+  documentation at https://docs.tvbeat.com is credential-gated and may state different
+  limits.
+query_result_limits:
+  - name: breakdown query_options.limit
+    default: 500
+    note: >-
+      Result-set size cap on POST /{dataset}/breakdown, not a rate limit. Documented as
+      an optional query_options.limit integer defaulting to 500.
+  - name: dimensions_search search_string
+    minimum_length: 2
+    note: >-
+      HugeSet dimensions require a search_string of at least 2 characters or the query
+      is ignored — a load-shedding constraint rather than a throttle.

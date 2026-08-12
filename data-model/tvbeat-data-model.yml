@@ -1,0 +1,144 @@
+generated: '2026-08-12'
+method: derived
+source: >-
+  Derived from json-schema/tvbeat-breakdown-query.json and
+  json-schema/tvbeat-dimensions-search-query.json (both saved verbatim from the
+  provider), plus the terminology, dimension list, and response descriptions published
+  in https://github.com/tvbeat/public/blob/master/docs/api.md. No OpenAPI $ref graph
+  exists for this provider; every entity and field below appears literally in one of
+  those two sources.
+docs: https://github.com/tvbeat/public/blob/master/docs/api.md
+description: >-
+  The entity graph behind the TVbeat analytics API. TVbeat models television audience
+  measurement as an OLAP cube rather than as CRUD resources: a Dataset scopes access,
+  Dimensions are the attributes you slice by, Metrics are the measures returned, and a
+  Breakdown is the computed result of applying Filters over a TimeSpan.
+notation: >-
+  relationships use has_one / has_many / belongs_to with the referencing field name;
+  direction is from the entity that owns the reference.
+
+entities:
+  - name: Dataset
+    domain: access
+    identifier: dataset name (URL path segment)
+    description: >-
+      A source of data for a query. One or more datasets are assigned to an account at
+      opening; every endpoint is parametrized by {dataset}. Requesting a dataset outside
+      the granted permissions returns 403.
+  - name: Dimension
+    domain: schema
+    identifier: key (e.g. channel.id, content.genre, subscriber.regions)
+    fields: [key, description, type]
+    description: >-
+      A data attribute you can break down or filter by. Returned by
+      GET /{dataset}/dimensions in three categories — breakdown, filter and
+      target_audience (the last documented as currently unsupported).
+    types:
+      - name: Scalar
+        meaning: a continuous numerical value
+      - name: Set
+        meaning: a pre-defined list of fewer than 100 values
+      - name: HugeSet
+        meaning: a pre-defined list of a larger number of values; requires a search_string of at least 2 characters
+    published_keys:
+      - {key: subscriber.regions, description: Region, type: Set}
+      - {key: content.episode, description: Episode, type: Set}
+      - {key: content.genre, description: Genre, type: Set}
+      - {key: content.subgenre, description: Subgenre, type: Set}
+      - {key: content.season, description: Season, type: Set}
+      - {key: content.id, description: Content, type: HugeSet}
+      - {key: channel.id, description: Channel, type: Set}
+      - {key: device.ua, description: Device Type, type: Set}
+      - {key: device.oss, description: Operating systems, type: Set}
+      - {key: video.resolution, description: Video resolution, type: Set}
+    note: >-
+      The key list above is the example set published in the reference; the authoritative
+      list per account is whatever GET /{dataset}/dimensions returns for that credential.
+  - name: DimensionValue
+    domain: schema
+    identifier: value (integer id)
+    fields: [label, value, image, channel.id]
+    description: >-
+      A single member of a Set or HugeSet dimension, returned by
+      POST /{dataset}/dimensions_search. `value` is the id used in filter_ids; `label`
+      is the human-readable title. The reference states `image` and `channel.id`
+      should not be relied on and may be absent.
+  - name: Filter
+    domain: query
+    fields: [filter_dimension_name, filter_ids]
+    schema: json-schema/tvbeat-breakdown-query.json#/definitions/DataTypes.Filter
+    description: A constraint binding one dimension to a list of DimensionValue ids.
+  - name: TimeSpan
+    domain: query
+    fields: [from, to]
+    schema: json-schema/tvbeat-breakdown-query.json#/definitions/DataTypes.TimeSpan
+    description: >-
+      Integer UNIX timestamps describing the semi-open interval [from, to). Required on
+      every breakdown query.
+  - name: QueryOptions
+    domain: query
+    fields: [limit, sort_metric, sort_order]
+    schema: json-schema/tvbeat-breakdown-query.json#/definitions/DataTypes.QueryOptions
+    description: Optional result shaping — cap (default 500), sort metric and sort direction.
+  - name: Breakdown
+    domain: result
+    fields: [audience, intervals]
+    description: >-
+      The computed result of a breakdown query. `audience` reports universum, size and
+      percent; `intervals` carries one list per requested interval (only `total` today).
+  - name: Audience
+    domain: result
+    fields: [universum, size, percent]
+    description: >-
+      universum is the total audience; size is the audience matched by the filters;
+      percent is the ratio of the two.
+  - name: IntervalRow
+    domain: result
+    fields:
+      - label
+      - '<breakdown dimension key> (e.g. channel.id)'
+      - rating
+      - ratingPercent
+      - reach
+      - reachPercent
+      - share
+      - averageDuration
+      - avgDurAll
+      - totalDuration
+    description: >-
+      One row per member of the breakdown dimension, plus one synthetic total-of-totals
+      row whose label is "All" and whose dimension key is set to -2.
+  - name: Metric
+    domain: measurement
+    description: >-
+      A quantitative measure returned inside an IntervalRow. The reference states the
+      metric set can differ from query to query; the sortable metrics are named
+      explicitly in the DataTypes.SortMetric enum.
+    sortable_values: [UniqueReach, AverageDuration, ShareOnContent, ReachPercent]
+
+relationships:
+  - {from: Dataset, to: Dimension, type: has_many, via: '{dataset} path segment'}
+  - {from: Dimension, to: DimensionValue, type: has_many, via: dimension_name}
+  - {from: Filter, to: Dimension, type: belongs_to, via: filter_dimension_name}
+  - {from: Filter, to: DimensionValue, type: has_many, via: filter_ids}
+  - {from: Breakdown, to: Filter, type: has_many, via: filters}
+  - {from: Breakdown, to: TimeSpan, type: has_one, via: time_span}
+  - {from: Breakdown, to: QueryOptions, type: has_one, via: query_options}
+  - {from: Breakdown, to: Dimension, type: belongs_to, via: dimension_name}
+  - {from: Breakdown, to: Audience, type: has_one, via: audience}
+  - {from: Breakdown, to: IntervalRow, type: has_many, via: intervals.total}
+  - {from: IntervalRow, to: DimensionValue, type: belongs_to, via: '<breakdown dimension key>'}
+  - {from: IntervalRow, to: Metric, type: has_many, via: 'metric keys on the row'}
+
+sentinels:
+  - value: -2
+    field: '<breakdown dimension key> on IntervalRow'
+    meaning: the total-of-totals row (label "All")
+  - value: -3
+    field: channel.id on DimensionValue
+    meaning: appears in the published dimensions_search example for items with no single owning channel
+
+caveat: >-
+  Derived from a reference last modified 2017-05-23 whose API root
+  (https://api.tvbeat.com) no longer resolves in public DNS. The graph describes the
+  contract TVbeat published, not a surface that was re-observed live.

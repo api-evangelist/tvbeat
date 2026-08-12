@@ -1,0 +1,107 @@
+{
+  "required": ["dimension_name", "filters", "time_span"],
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "DataTypes.Query",
+  "title": "DataTypes.Query",
+  "type": "object",
+  "definitions": {
+    "DataTypes.TimeSpan": {
+      "required": ["from", "to"],
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "DataTypes.TimeSpan",
+      "type": "object",
+      "properties": {
+        "to": {
+          "type": "integer"
+        },
+        "from": {
+          "type": "integer"
+        }
+      }
+    },
+    "DataTypes.QueryOptions": {
+      "required": [],
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "DataTypes.QueryOptions",
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer"
+        },
+        "sort_order": {
+          "$ref": "#/definitions/DataTypes.SortOrder"
+        },
+        "sort_metric": {
+          "$ref": "#/definitions/DataTypes.SortMetric"
+        }
+      }
+    },
+    "DataTypes.SortMetric": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "DataTypes.SortMetric",
+      "enum": [
+        "UniqueReach",
+        "AverageDuration",
+        "ShareOnContent",
+        "ReachPercent"
+      ]
+    },
+    "DataTypes.SortOrder": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "DataTypes.SortOrder",
+      "enum": [
+        "ASC",
+        "DESC"
+      ]
+    },
+    "DataTypes.Interval": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "DataTypes.Interval",
+      "enum": ["Total"]
+    },
+    "DataTypes.Filter": {
+      "required": [
+        "filter_dimension_name",
+        "filter_ids"
+      ],
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "title": "DataTypes.Filter",
+      "type": "object",
+      "properties": {
+        "filter_dimension_name": {
+          "type": "string"
+        },
+        "filter_ids": {
+          "items": [
+            {
+              "type": "integer"
+            }
+          ],
+          "type": "array"
+        }
+      }
+    }
+  },
+  "properties": {
+    "query_options": {
+      "$ref": "#/definitions/DataTypes.QueryOptions"
+    },
+    "dimension_name": {
+      "type": "string"
+    },
+    "filters": {
+      "items": [
+        {
+          "$ref": "#/definitions/DataTypes.Filter"
+        }
+      ],
+      "type": "array"
+    },
+    "interval": {
+      "$ref": "#/definitions/DataTypes.Interval"
+    },
+    "time_span": {
+      "$ref": "#/definitions/DataTypes.TimeSpan"
+    }
+  }
+}

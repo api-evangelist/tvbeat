@@ -1,0 +1,30 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://github.com/tvbeat/public/blob/master/docs/api.md — the "Example Response"
+  blocks of TVbeat's own public API reference, hosted in the company's GitHub
+  organization. Each payload is saved VERBATIM as published.
+description: >-
+  Response examples for the three documented TVbeat analytics API operations. TVbeat
+  publishes no OpenAPI, so these examples are not in-spec; they are the provider's own
+  published sample payloads captured as standalone documents.
+caveat: >-
+  Payloads are illustrative samples published by TVbeat, not live responses — the
+  documented API root https://api.tvbeat.com does not resolve in public DNS as of
+  2026-08-12, so none of these could be re-observed against the running service.
+examples:
+  - operation: 'GET /{dataset}/dimensions'
+    file: tvbeat-dimensions-response-example.json
+    media_type: application/json
+    describes: Available breakdown / filter / target_audience dimensions for a dataset.
+  - operation: 'POST /{dataset}/dimensions_search'
+    file: tvbeat-dimensions-search-response-example.json
+    media_type: application/json
+    describes: Matching values (label + numeric id) for a Set or HugeSet dimension.
+  - operation: 'POST /{dataset}/breakdown'
+    file: tvbeat-breakdown-response-example.json
+    media_type: application/json
+    describes: >-
+      Audience universum/size/percent plus per-item TV metrics (rating, ratingPercent,
+      reach, reachPercent, share, averageDuration, avgDurAll, totalDuration) for the
+      requested breakdown dimension, including the synthetic "All" total row.

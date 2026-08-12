@@ -1,0 +1,109 @@
+generated: '2026-08-12'
+method: derived
+source: >-
+  Derived from json-schema/tvbeat-*.json (saved verbatim from the provider),
+  authentication/tvbeat-authentication.yml, errors/tvbeat-problem-types.yml,
+  conventions/tvbeat-conventions.yml and well-known/tvbeat-well-known.yml, cross-checked
+  against TVbeat's public reference at
+  https://github.com/tvbeat/public/blob/master/docs/api.md and the marketing claims on
+  https://tvbeat.com/how. Every "conforms: false" below is backed by a probe or by the
+  absence of the mechanism in the published reference — none is assumed.
+description: >-
+  Cross-cutting standards conformance for the TVbeat analytics API. The provider adopts
+  one industry standard cleanly (JSON Schema draft-04) and deliberately reimplements a
+  second (AWS SigV4-style request signing, as its own TVBEAT-HMAC-SHA256 scheme). No
+  identity, discovery, error, or media-type standard is adopted.
+standards:
+  - id: json-schema
+    conforms: true
+    version: draft-04
+    evidence: >-
+      Two complete draft-04 request schemas are published inline in the API reference
+      and saved verbatim to json-schema/. Both declare
+      $schema: http://json-schema.org/draft-04/schema# and use required/properties/
+      definitions/$ref correctly.
+  - id: http-request-signing
+    conforms: true
+    evidence: >-
+      TVBEAT-HMAC-SHA256 — a per-request HMAC-SHA256 signature over a canonical request,
+      with a two-step key derivation, explicitly documented as "very similar to" AWS
+      Signature Version 4. It is a first-party scheme, not a registered standard.
+  - id: oauth2
+    conforms: false
+    evidence: >-
+      No OAuth 2.0 anywhere. /.well-known/oauth-authorization-server and
+      /.well-known/oauth-protected-resource return 403 on tvbeat.com and an HTML SPA
+      shell on docs.tvbeat.com. Credentials are an assigned access key ID + secret.
+  - id: oidc
+    conforms: false
+    evidence: 'No /.well-known/openid-configuration on any host (403 on tvbeat.com, SPA shell on docs.tvbeat.com).'
+  - id: rfc9457
+    conforms: false
+    evidence: >-
+      No application/problem+json. The reference documents 401/403/429 with "an
+      appropriate error message" and never publishes an error envelope.
+  - id: rfc9116-security-txt
+    conforms: false
+    evidence: '/.well-known/security.txt returns 403 on tvbeat.com and an HTML login shell on docs.tvbeat.com.'
+  - id: rfc8594-sunset
+    conforms: false
+    evidence: No deprecation policy, Sunset header or Deprecation header is documented.
+  - id: rfc9421-ratelimit-headers
+    conforms: false
+    evidence: >-
+      No RateLimit-* or X-RateLimit-* response headers are documented; exhaustion is
+      signalled by a bare 429.
+  - id: pagination
+    conforms: false
+    evidence: >-
+      No cursor, offset, page token or has_more. Result size is capped by an optional
+      limit (default 500 on breakdown) with no way to page past it.
+  - id: idempotency
+    conforms: false
+    evidence: >-
+      No idempotency key, replay semantics or retention window is documented. Both POST
+      operations are read-only queries, but TVbeat publishes no idempotency contract.
+  - id: openapi
+    conforms: false
+    evidence: >-
+      No OpenAPI or Swagger document exists on any TVbeat host — see the probe table in
+      well-known/tvbeat-well-known.yml.
+  - id: asyncapi
+    conforms: false
+    evidence: No event, streaming or webhook surface is documented, so there is nothing for AsyncAPI to describe.
+  - id: mcp
+    conforms: false
+    evidence: No hosted MCP server on any TVbeat host or in any public registry.
+  - id: a2a
+    conforms: false
+    evidence: 'No agent card: /.well-known/agent-card.json and /.well-known/agent.json miss on every host.'
+  - id: api-catalog
+    conforms: false
+    evidence: '/.well-known/api-catalog returns 403 on tvbeat.com and an HTML SPA shell on docs.tvbeat.com.'
+  - id: tls
+    conforms: true
+    evidence: >-
+      TLS 1.3 with HSTS (max-age 15768000) on tvbeat.com — see
+      security/tvbeat-domain-security.yml.
+  - id: dnssec
+    conforms: false
+    evidence: 'tvbeat.com is not DNSSEC-signed and publishes no CAA records (probed 2026-07-21, re-probed 2026-08-12).'
+  - id: spf-dmarc
+    conforms: true
+    partial: true
+    evidence: 'SPF and DMARC records are published for tvbeat.com; DMARC policy is p=none (monitor only, no enforcement).'
+certifications:
+  published: false
+  note: >-
+    No SOC 2, ISO 27001, PCI DSS, HIPAA or FedRAMP claim appears on any TVbeat page, and
+    no trust center exists (probe-security-programs.py returned vdp=none trust=none on
+    2026-08-12). tvbeat.com/how describes "privacy-compliant data-driven TV advertising"
+    and "permission based controls" as product capabilities, but names no certification,
+    auditor, framework or regulation. No Compliance pointer is emitted.
+regulatory_context:
+  note: >-
+    TVbeat processes census-level TV viewership data for European broadcasters and
+    operators, which places it squarely in GDPR scope, but the company publishes no DPA,
+    no sub-processor list, and no privacy/security framework attestation on its public
+    surface. Its privacy policy is a JS-rendered SnazzyDocs page whose text could not be
+    read server-side.

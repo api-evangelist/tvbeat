@@ -18,9 +18,13 @@ description: TVbeat is a London-based, Techstars-backed advertising technology c
   optimize, and measure campaigns across audiences, yield, and operations, supporting
   multi-currency transacting (ratings, spots, impressions, and outcomes) and modern
   buying models — Direct, Programmatic, Self-Serve, and AI-driven — across both traditional
-  linear spots and streaming inventory. TVbeat does not publish a public API, SDK,
-  or open developer portal; its documentation portal at docs.tvbeat.com is private
-  and requires credentials.
+  linear spots and streaming inventory. TVbeat publishes a complete first-party API
+  reference for its analytics API — three query endpoints signed with a custom
+  TVBEAT-HMAC-SHA256 scheme, with two draft-04 JSON Schemas and example responses — in
+  its own GitHub organization at github.com/tvbeat/public, but the API root it names
+  (api.tvbeat.com) no longer resolves in public DNS and the document has not been
+  modified since 2017. TVbeat ships no OpenAPI, SDK, CLI, MCP server or agent card, and
+  its current documentation portal at docs.tvbeat.com is credential-gated.
 url: https://raw.githubusercontent.com/api-evangelist/tvbeat/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -30,7 +34,7 @@ x-tier: stub
 x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-21'
+modified: '2026-08-12'
 tags:
 - Company
 - Advertising
@@ -60,8 +64,62 @@ common:
   url: https://tvbeat-legal.snazzydocs.com/1.0/privacy-policy
 - type: DomainSecurity
   url: security/tvbeat-domain-security.yml
+- type: APIReference
+  url: https://github.com/tvbeat/public/blob/master/docs/api.md
+- type: Blog
+  url: https://blog.tvbeat.com/
+- type: BlogRSS
+  url: https://blog.tvbeat.com/rss
+- type: Support
+  url: mailto:support@tvbeat.com
+- type: Authentication
+  url: authentication/tvbeat-authentication.yml
+- type: ErrorCatalog
+  url: errors/tvbeat-problem-types.yml
+- type: RateLimits
+  url: rate-limits/tvbeat-rate-limits.yml
+- type: Conventions
+  url: conventions/tvbeat-conventions.yml
+- type: DataModel
+  url: data-model/tvbeat-data-model.yml
+- type: JSONSchema
+  url: json-schema/tvbeat-json-schema.yml
+- type: Examples
+  url: examples/tvbeat-examples.yml
+- type: ChangeLog
+  url: changelog/tvbeat-changelog.yml
+- type: Lifecycle
+  url: lifecycle/tvbeat-lifecycle.yml
+- type: Conformance
+  url: conformance/tvbeat-conformance.yml
+- type: Plans
+  url: plans/tvbeat-plans-pricing.yml
+- type: LLMsTxt
+  url: llms/tvbeat-llms.txt
 x-enrichment:
-  date: '2026-07-21'
-  status: minimal
-  artifacts_added: 1
+  date: '2026-08-12'
+  status: enriched
+  artifacts_added: 18
   pass: local-v1
+x-contract-discovery:
+  date: '2026-08-12'
+  result: >-
+    First-party API reference found in the provider's own GitHub organization
+    (github.com/tvbeat/public/docs/api.md, last modified 2017-05-23) carrying two
+    draft-04 JSON Schemas and three example responses — saved to json-schema/ and
+    examples/. The API root it documents, https://api.tvbeat.com, is NXDOMAIN on the
+    system resolver, 1.1.1.1 and 8.8.8.8, so no apis[] entry is claimed. The current
+    product docs at docs.tvbeat.com answer every path with a SnazzyDocs page titled
+    "Login". No OpenAPI, GraphQL, AsyncAPI, MCP server or agent card exists on any host.
+  evidence:
+  - url: https://github.com/tvbeat/public/blob/master/docs/api.md
+    status: 200
+  - url: https://api.tvbeat.com/
+    status: 0
+    note: NXDOMAIN
+  - url: https://docs.tvbeat.com/1.0/api
+    status: 200
+    note: SnazzyDocs login shell
+  - url: https://tvbeat.com/.well-known/security.txt
+    status: 403
+  detail: well-known/tvbeat-well-known.yml

@@ -1,0 +1,25 @@
+{
+  "required": ["dimension_name"],
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "DataTypes.Query",
+  "title": "DataTypes.Query",
+  "type": "object",
+  "definitions": {},
+  "properties": {
+    "limit": {
+      "type": "integer"
+    },
+    "start": {
+      "type": "integer"
+    },
+    "search_string": {
+      "type": "string"
+    },
+    "stop": {
+      "type": "integer"
+    },
+    "dimension_name": {
+      "type": "string"
+    }
+  }
+}
